@@ -21,11 +21,41 @@ from utilities import log
 
 class TVPowerContorl(object):
 
-    def __init__(self, monitor):
-        self.monitor = monitor
+    target_time_for_execution = 0
+    turn_off_tv_after = 1 # read from settings
 
-    def check_time(self):
-        log(["check time", monitor.screensaver_running])
+    def turn_off_tv(self):
+        log("turn_off_tv")
+        if xbmc.Player().isPlaying() == True: xbmc.Player().stop()
+        # xbmc.restart() - restart PC
+        return True
+
+    def turn_on_tv(self):
+        log("turn_on_tv")
+        return True
+
+    def execute_command(self, event):
+        log(["Execute", event])
+        if event == "screen_saver_activated_target_time_ago":
+            self.turn_off_tv()
+        elif event == "screen_saver_deactivated":
+            self.turn_on_tv()
+        elif event == "player_stared":
+            self.turn_on_tv()
+      
+        # screen_saver_activated
+        # screen_saver_deactivated
+        # screen_saver_activated_target_time_ago
+        # player_stared
+
+    def check_monitor(self, event = None):
+        log(["Check monitor", monitor.screensaver_running])
+        if event != None: self.execute_command(event)
+        if event == "screen_saver_activated": self.target_time_for_execution = time.time() + (self.turn_off_tv_after * 60)
+
+        if monitor.screensaver_running == True and self.target_time_for_execution > 0 and self.target_time_for_execution <= time.time():
+            self.target_time_for_execution = 0
+            self.execute_command("screen_saver_activated_target_time_ago")
 
 class KodiMonitor(xbmc.Monitor):
 
@@ -37,23 +67,24 @@ class KodiMonitor(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
         log([method,data])
-        # parsed_data = json.loads(data)
-        # Player.OnPlay
+        if method == "Player.OnPlay": tvpower.check_monitor("player_stared")
 
     def onScreensaverActivated(self):
-        log("screen saver on")
+        log("onScreensaverActivated")
         self.screensaver_running = True
+        tvpower.check_monitor("screen_saver_activated")
 
     def onScreensaverDeactivated(self):
-        log("screen saver off")
+        log("onScreensaverDeactivated")
         self.screensaver_running = False
+        tvpower.check_monitor("screen_saver_deactivated")
 
 if (__name__ == "__main__"):
     log("Starting.. " + __version__)
     monitor = KodiMonitor()
-    tvpower = TVPowerContorl(monitor)
+    tvpower = TVPowerContorl()
     while not monitor.abortRequested():
         if monitor.waitForAbort(10): break
-        tvpower.check_time()
+        tvpower.check_monitor()
     del monitor
     log("Stopped.. " + __version__)
