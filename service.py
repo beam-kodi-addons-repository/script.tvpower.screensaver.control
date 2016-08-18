@@ -19,9 +19,17 @@ sys.path.append (__resource__)
 
 from utilities import log
 
+class TVPowerContorl(object):
+
+    def __init__(self, monitor):
+        self.monitor = monitor
+
+    def check_time(self):
+        log(["check time", monitor.screensaver_running])
+
 class KodiMonitor(xbmc.Monitor):
 
-    sef.screensaver_running = False
+    screensaver_running = False
 
     def onSettingsChanged(self):
         global __addon__
@@ -30,6 +38,7 @@ class KodiMonitor(xbmc.Monitor):
     def onNotification(self, sender, method, data):
         log([method,data])
         # parsed_data = json.loads(data)
+        # Player.OnPlay
 
     def onScreensaverActivated(self):
         log("screen saver on")
@@ -39,11 +48,12 @@ class KodiMonitor(xbmc.Monitor):
         log("screen saver off")
         self.screensaver_running = False
 
-
 if (__name__ == "__main__"):
     log("Starting.. " + __version__)
     monitor = KodiMonitor()
+    tvpower = TVPowerContorl(monitor)
     while not monitor.abortRequested():
-	    if monitor.waitForAbort(10): break
+        if monitor.waitForAbort(10): break
+        tvpower.check_time()
     del monitor
     log("Stopped.. " + __version__)
