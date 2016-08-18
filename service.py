@@ -17,12 +17,14 @@ __resource__      = xbmc.translatePath(__resource_path__).decode('utf-8')
 
 sys.path.append (__resource__)
 
-from utilities import log
+def log(message):
+    xbmc.log("### " + __scriptname__ + ": " + str(message), level=xbmc.LOGNOTICE)
 
 class TVPowerContorl(object):
 
     target_time_for_execution = 0
     turn_off_tv_after = 1 # read from settings
+    turn_on_tv_on_player_start = True
 
     def turn_off_tv(self):
         log("turn_off_tv")
@@ -40,7 +42,7 @@ class TVPowerContorl(object):
             self.turn_off_tv()
         elif event == "screen_saver_deactivated":
             self.turn_on_tv()
-        elif event == "player_stared":
+        elif event == "player_stared" and self.turn_on_tv_on_player_start:
             self.turn_on_tv()
       
         # screen_saver_activated
