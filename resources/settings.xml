@@ -2,14 +2,14 @@
 <settings>
 	<category label="Turn ON TV">
 		<setting id="turn_on_deactivated" type="bool" label="After screensaver deactivated" default="true" />
-		<setting id="turn_on_player" label="When player started" type="bool" default="true" />
+		<setting id="turn_on_player" label="When player started" type="bool" default="true" enable="eq(-1,true)" />
 	</category>
 	<category label="Turn OFF TV">
 		<setting id="turn_off_activated" type="bool" label="After screensaver activated" default="true" />
-		<setting id="turn_off_player_ones_launched" type="bool" label="Only if player at least one launched" default="true" />		
-		<setting id="turn_off_wait_time" label="Wait on screensaver before turning off (minutes)" type="slider" subsetting="true" enable="eq(-1,true)" default="45" range="0,5,180" option="int" />
-		<setting id="turn_off_stop" label="Stop player" type="bool" default="true" />
-		<setting id="turn_off_action" label="Execute action after turned off" type="labelenum" values="none|restart|reboot|shutdown" default="none" />
+		<setting id="turn_off_player_ones_launched" type="bool" label="Only if player at least one launched" default="false" enable="eq(-1,true)" />		
+		<setting id="turn_off_wait_time" label="Wait on screensaver before turning off (minutes)" type="slider" subsetting="true" enable="eq(-2,true)" default="45" range="0,5,180" option="int" />
+		<setting id="turn_off_stop" label="Stop player" type="bool" default="true" enable="eq(-3,true)" />
+		<setting id="turn_off_action" label="Execute action after turned off" type="labelenum" values="none|restart|reboot|shutdown" default="none" enable="eq(-4,true)" />
 	</category>
 	<category label="Advanced">
 		<setting id="cec_method" label="Send HDMI-CEC commands via" type="labelenum" values="kodi|cec-client" default="kodi" />
