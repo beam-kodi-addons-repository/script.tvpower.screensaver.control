@@ -19,7 +19,7 @@ __resource__      = xbmc.translatePath(__resource_path__).decode('utf-8')
 sys.path.append (__resource__)
 
 def log(message):
-    xbmc.log("### " + __scriptname__ + ": " + str(message), level=xbmc.LOGDEBUG)
+    xbmc.log("### " + __scriptname__ + ": " + str(message), level=xbmc.LOGNOTICE)
 
 class TVPowerContorl(object):
 
@@ -30,25 +30,24 @@ class TVPowerContorl(object):
 
     def load_settings(self):
         log("loading settings")
-        self.turn_off_activated = bool(__addon__.getSetting("turn_off_activated"))
+        self.turn_off_activated = __addon__.getSetting("turn_off_activated") == 'true'
         self.turn_off_after = int(__addon__.getSetting("turn_off_wait_time"))
-        self.stop_player_on_turn_off = bool(__addon__.getSetting("turn_off_stop"))
+        self.stop_player_on_turn_off = __addon__.getSetting("turn_off_stop") == 'true'
         self.turn_off_action = __addon__.getSetting("turn_off_action")
 
-        self.turn_on_deactivated = bool(__addon__.getSetting("turn_on_deactivated"))
-        self.turn_on_player_start = bool(__addon__.getSetting("turn_on_player"))
+        self.turn_on_deactivated = __addon__.getSetting("turn_on_deactivated") == 'true'
+        self.turn_on_player_start = __addon__.getSetting("turn_on_player") == 'true'
 
         self.cec_method = __addon__.getSetting("cec_method")
         self.cec_client_command = __addon__.getSetting("cec_client_path")
 
-    turn_off_tv_after = 1 # read from settings
-    turn_on_tv_on_player_start = True
-
-    def stop_player(self):
-        log("stop player")
+    def hook_stop_player(self):
+        log(["stop player",self.stop_player_on_turn_off])
+        if self.stop_player_on_turn_off == False: return False
         if xbmc.Player().isPlaying() == True: xbmc.Player().stop()
+        return True
 
-    def turn_off_hook_action(self):
+    def hook_turn_off_action(self):
         log(["turn off post action", self.turn_off_action])
         if self.turn_off_action == "none":
             return False
@@ -69,8 +68,8 @@ class TVPowerContorl(object):
         elif self.cec_method == "cec-client":
             subprocess.call("echo 'standby 0' | " + self.cec_client_command + " -s", shell=True)
             
-        if self.stop_player_on_turn_off == True: self.stop_player()
-        self.turn_off_hook_action()
+        self.hook_stop_player()
+        self.hook_turn_off_action()
         return True
 
     def turn_on_tv(self):
@@ -99,7 +98,6 @@ class TVPowerContorl(object):
         # player_stared
 
     def check_monitor(self, event = None):
-        log(["Check monitor", monitor.screensaver_running])
         if event != None: self.execute_command(event)
         if event == "screen_saver_activated": self.target_time_for_execution = time.time() + (self.turn_off_after * 60)
 
@@ -117,16 +115,14 @@ class KodiMonitor(xbmc.Monitor):
         tvpower.load_settings()
 
     def onNotification(self, sender, method, data):
-        log([method,data])
+        # log([method,data])
         if method == "Player.OnPlay": tvpower.check_monitor("player_stared")
 
     def onScreensaverActivated(self):
-        log("onScreensaverActivated")
         self.screensaver_running = True
         tvpower.check_monitor("screen_saver_activated")
 
     def onScreensaverDeactivated(self):
-        log("onScreensaverDeactivated")
         self.screensaver_running = False
         tvpower.check_monitor("screen_saver_deactivated")
 
