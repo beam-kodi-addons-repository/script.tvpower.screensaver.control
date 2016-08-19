@@ -24,6 +24,7 @@ def log(message):
 class TVPowerContorl(object):
 
     target_time_for_execution = 0
+    at_least_ones_player_launched = False
 
     def __init__(self):
         self.load_settings()
@@ -34,6 +35,7 @@ class TVPowerContorl(object):
         self.turn_off_after = int(__addon__.getSetting("turn_off_wait_time"))
         self.stop_player_on_turn_off = __addon__.getSetting("turn_off_stop") == 'true'
         self.turn_off_action = __addon__.getSetting("turn_off_action")
+        self.turn_off_player_ones_launched = __addon__.getSetting("turn_off_player_ones_launched") == 'true'
 
         self.turn_on_deactivated = __addon__.getSetting("turn_on_deactivated") == 'true'
         self.turn_on_player_start = __addon__.getSetting("turn_on_player") == 'true'
@@ -49,19 +51,28 @@ class TVPowerContorl(object):
 
     def hook_turn_off_action(self):
         log(["turn off post action", self.turn_off_action])
-        if self.turn_off_action == "none":
-            return False
-        elif self.turn_off_action == "restart":
+        if self.turn_off_action == "none": return False
+        
+        while scan_running():
+            log(["scan running","waiting"])
+            time.sleep(10)
+
+        if self.turn_off_action == "restart":
             xbmc.executebuiltin('XBMC.RestartApp()')
         elif self.turn_off_action == "reboot":
             xbmc.restart()
         elif self.turn_off_action == "shutdown":
             xbmc.shutdown()
+
         return True
 
     def turn_off_tv(self):
         log(["turn_off_tv", self.turn_off_activated])
         if self.turn_off_activated == False: return False
+        if self.turn_off_player_ones_launched == True and self.at_least_ones_player_launched == False: 
+            log(["skipping", "player wasn't launched"])
+            return False
+        
         # do action
         if self.cec_method == "kodi":
             xbmc.executebuiltin('XBMC.CECStandby()')
@@ -89,8 +100,9 @@ class TVPowerContorl(object):
             self.turn_off_tv()
         elif event == "screen_saver_deactivated":
             self.turn_on_tv()
-        elif event == "player_stared" and self.turn_on_tv_on_player_start:
-            self.turn_on_tv()
+        elif event == "player_stared":
+            self.at_least_ones_player_launched = True
+            if self.turn_on_player_start == True: self.turn_on_tv()
       
         # screen_saver_activated
         # screen_saver_deactivated
@@ -104,6 +116,13 @@ class TVPowerContorl(object):
         if monitor.screensaver_running == True and self.target_time_for_execution > 0 and self.target_time_for_execution <= time.time():
             self.target_time_for_execution = 0
             self.execute_command("screen_saver_activated_target_time_ago")
+
+    def scan_running(self):
+        #check if any type of scan is currently running
+        if(xbmc.getCondVisibility('Library.IsScanningVideo') or xbmc.getCondVisibility('Library.IsScanningMusic')):
+            return True            
+        else:
+            return False
 
 class KodiMonitor(xbmc.Monitor):
 

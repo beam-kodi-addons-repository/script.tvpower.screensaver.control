@@ -5,7 +5,8 @@
 		<setting id="turn_on_player" label="When player started" type="bool" default="true" />
 	</category>
 	<category label="Turn OFF TV">
-		<setting id="turn_off_activated" type="bool" label="After screensaver activated" default="true" />		
+		<setting id="turn_off_activated" type="bool" label="After screensaver activated" default="true" />
+		<setting id="turn_off_player_ones_launched" type="bool" label="Only if player at least one launched" default="true" />		
 		<setting id="turn_off_wait_time" label="Wait on screensaver before turning off (minutes)" type="slider" subsetting="true" enable="eq(-1,true)" default="45" range="0,5,180" option="int" />
 		<setting id="turn_off_stop" label="Stop player" type="bool" default="true" />
 		<setting id="turn_off_action" label="Execute action after turned off" type="labelenum" values="none|restart|reboot|shutdown" default="none" />
