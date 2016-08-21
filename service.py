@@ -53,7 +53,7 @@ class TVPowerContorl(object):
         log(["turn off post action", self.turn_off_action])
         if self.turn_off_action == "none": return False
         
-        while scan_running():
+        while self.scan_running():
             log(["scan running","waiting"])
             time.sleep(10)
 
