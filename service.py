@@ -34,6 +34,8 @@ class TVPowerContorl(object):
         self.turn_off_activated = __addon__.getSetting("turn_off_activated") == 'true'
         self.turn_off_after = int(__addon__.getSetting("turn_off_wait_time"))
         self.stop_player_on_turn_off = __addon__.getSetting("turn_off_stop") == 'true'
+        self.stop_player_on_turn_off_last_at = 0
+
         self.turn_off_action = __addon__.getSetting("turn_off_action")
         self.turn_off_player_ones_launched = __addon__.getSetting("turn_off_player_ones_launched") == 'true'
 
@@ -43,10 +45,14 @@ class TVPowerContorl(object):
         self.cec_method = __addon__.getSetting("cec_method")
         self.cec_client_command = __addon__.getSetting("cec_client_path")
 
+        self.suppress_wake_up = int(__addon__.getSetting("suppress_wake_up"))
+
     def hook_stop_player(self):
         log(["stop player",self.stop_player_on_turn_off])
         if self.stop_player_on_turn_off == False: return False
-        if xbmc.Player().isPlaying() == True: xbmc.Player().stop()
+        if xbmc.Player().isPlaying() == True: 
+            xbmc.Player().stop()
+            self.stop_player_on_turn_off_last_at = time.time()
         return True
 
     def hook_turn_off_action(self):
@@ -99,7 +105,13 @@ class TVPowerContorl(object):
         if event == "screen_saver_activated_target_time_ago":
             self.turn_off_tv()
         elif event == "screen_saver_deactivated":
-            self.turn_on_tv()
+            if self.suppress_wake_up != 0 and (self.stop_player_on_turn_off_last_at + self.suppress_wake_up) > time.time():
+                log("suppressing wake up actions")
+                self.stop_player_on_turn_off_last_at = 0
+                xbmc.executebuiltin("XBMC.ActivateScreensaver()")
+                log("screensaver activated again")
+            else:
+                self.turn_on_tv()
         elif event == "player_stared":
             self.at_least_ones_player_launched = True
             if self.turn_on_player_start == True: self.turn_on_tv()

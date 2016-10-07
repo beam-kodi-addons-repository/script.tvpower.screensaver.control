@@ -14,5 +14,6 @@
 	<category label="Advanced">
 		<setting id="cec_method" label="Send HDMI-CEC commands via" type="labelenum" values="kodi|cec-client" default="kodi" />
 		<setting id="cec_client_path" label="CEC-Client command path" type="text" enable="eq(-1,1)" default="/usr/osmc/bin/cec-client" />
+		<setting id="suppress_wake_up" label="Suppress wake up after player stop (seconds)" default="15" type="slider" range="0,5,60" option="int" />
 	</category>
 </settings>
