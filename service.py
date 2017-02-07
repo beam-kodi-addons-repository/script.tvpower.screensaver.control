@@ -65,6 +65,8 @@ class TVPowerContorl(object):
 
         if self.turn_off_action == "restart":
             xbmc.executebuiltin('XBMC.RestartApp()')
+        elif self.turn_off_action == "quit":
+            xbmc.executebuiltin('XBMC.Quit()')
         elif self.turn_off_action == "reboot":
             xbmc.restart()
         elif self.turn_off_action == "shutdown":
