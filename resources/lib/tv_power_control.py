@@ -11,9 +11,10 @@ class TVPowerContorl(object):
     target_time_for_execution = 0
     at_least_ones_player_launched = False
 
-    def __init__(self, addon, monitor):
+    def __init__(self, addon, monitor, external_run = False):
         self.addon = addon
         self.monitor = monitor
+        self.external_run = external_run
         self.load_settings()
 
     def load_settings(self):
@@ -63,10 +64,11 @@ class TVPowerContorl(object):
 
     def turn_off_tv(self):
         log(["turn_off_tv", self.turn_off_activated])
-        if self.turn_off_activated == False: return False
-        if self.turn_off_player_ones_launched == True and self.at_least_ones_player_launched == False:
-            log(["skipping", "player wasn't launched"])
-            return False
+        if self.external_run == False:
+            if self.turn_off_activated == False: return False
+            if self.turn_off_player_ones_launched == True and self.at_least_ones_player_launched == False:
+                log(["skipping", "player wasn't launched"])
+                return False
 
         # do action
         if self.cec_method == "kodi":
@@ -80,7 +82,9 @@ class TVPowerContorl(object):
 
     def turn_on_tv(self):
         log(["turn_on_tv", self.turn_on_deactivated])
-        if self.turn_on_deactivated == False: return False
+        if self.external_run == False:
+            if self.turn_on_deactivated == False: return False
+            
         # do action
         if self.cec_method == "kodi":
             xbmc.executebuiltin('XBMC.CECActivateSource()')

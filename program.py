@@ -13,7 +13,7 @@ sys.path.append (__resource__)
 
 from tv_power_control import TVPowerContorl
 
-tvpower = TVPowerContorl(__addon__, None)
+tvpower = TVPowerContorl(__addon__, None, True)
 
 def log(message):
     xbmc.log("### TV power controller: " + str(message), level=xbmc.LOGNOTICE)
