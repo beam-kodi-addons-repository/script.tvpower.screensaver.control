@@ -10,6 +10,7 @@ class TVPowerContorl(object):
 
     target_time_for_execution = 0
     at_least_ones_player_launched = False
+    post_action_executed = False
 
     def __init__(self, addon, monitor, external_run = False):
         self.addon = addon
@@ -51,6 +52,8 @@ class TVPowerContorl(object):
             log(["scan running","waiting"])
             time.sleep(10)
 
+        self.post_action_executed = True
+
         if self.turn_off_action == "restart":
             xbmc.executebuiltin('XBMC.RestartApp()')
         elif self.turn_off_action == "quit":
@@ -84,7 +87,7 @@ class TVPowerContorl(object):
         log(["turn_on_tv", self.turn_on_deactivated])
         if self.external_run == False:
             if self.turn_on_deactivated == False: return False
-            
+
         # do action
         if self.cec_method == "kodi":
             xbmc.executebuiltin('XBMC.CECActivateSource()')
@@ -103,6 +106,8 @@ class TVPowerContorl(object):
                 self.stop_player_on_turn_off_last_at = 0
                 xbmc.executebuiltin("XBMC.ActivateScreensaver()")
                 log("screensaver activated again")
+            elif self.post_action_executed == True:
+                log("post action executed, suppressing wake up action")
             else:
                 self.turn_on_tv()
         elif event == "player_stared":
