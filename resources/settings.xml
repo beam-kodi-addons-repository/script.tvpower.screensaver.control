@@ -2,7 +2,7 @@
 <settings>
 	<category label="Turn ON TV">
 		<setting id="turn_on_deactivated" type="bool" label="After screensaver deactivated" default="true" />
-		<setting id="turn_on_player" label="When player started" type="bool" default="true" enable="eq(-1,true)" />
+		<setting id="turn_on_player" label="When player started" type="bool" default="true" />
 		<setting id="turn_on_cec_method" label="Send HDMI-CEC commands via" type="labelenum" values="kodi|cec-client" default="kodi" />
 	</category>
 	<category label="Turn OFF TV">
