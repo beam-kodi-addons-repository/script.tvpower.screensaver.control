@@ -32,7 +32,7 @@ class TVPowerContorl(object):
         self.turn_on_player_start = self.addon.getSetting("turn_on_player") == 'true'
 
         self.turn_on_cec_method = self.addon.getSetting("turn_on_cec_method")
-        self.turn_off_cec_method = self.addon.getSetting("turn_on_cec_method")
+        self.turn_off_cec_method = self.addon.getSetting("turn_off_cec_method")
         self.cec_client_command = self.addon.getSetting("cec_client_path")
 
         self.suppress_wake_up = int(self.addon.getSetting("suppress_wake_up"))
