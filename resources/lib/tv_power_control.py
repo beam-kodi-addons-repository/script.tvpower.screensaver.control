@@ -31,7 +31,8 @@ class TVPowerContorl(object):
         self.turn_on_deactivated = self.addon.getSetting("turn_on_deactivated") == 'true'
         self.turn_on_player_start = self.addon.getSetting("turn_on_player") == 'true'
 
-        self.cec_method = self.addon.getSetting("cec_method")
+        self.turn_on_cec_method = self.addon.getSetting("turn_on_cec_method")
+        self.turn_off_cec_method = self.addon.getSetting("turn_on_cec_method")
         self.cec_client_command = self.addon.getSetting("cec_client_path")
 
         self.suppress_wake_up = int(self.addon.getSetting("suppress_wake_up"))
@@ -74,9 +75,9 @@ class TVPowerContorl(object):
                 return False
 
         # do action
-        if self.cec_method == "kodi":
+        if self.turn_off_cec_method == "kodi":
             xbmc.executebuiltin('XBMC.CECStandby()')
-        elif self.cec_method == "cec-client":
+        elif self.turn_off_cec_method == "cec-client":
             subprocess.call("echo 'standby 0' | " + self.cec_client_command + " -s", shell=True)
 
         self.hook_stop_player()
@@ -89,9 +90,9 @@ class TVPowerContorl(object):
             if self.turn_on_deactivated == False: return False
 
         # do action
-        if self.cec_method == "kodi":
+        if self.turn_on_cec_method == "kodi":
             xbmc.executebuiltin('XBMC.CECActivateSource()')
-        elif self.cec_method == "cec-client":
+        elif self.turn_on_cec_method == "cec-client":
             subprocess.call("echo 'on 0' | " + self.cec_client_command + " -s", shell=True)
 
         return True
