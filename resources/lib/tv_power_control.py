@@ -77,7 +77,7 @@ class TVPowerContorl(object):
 
         self.hook_stop_player()
         self.hook_turn_off_action()
-        
+
         return True
 
     def turn_on_tv(self):
@@ -97,7 +97,7 @@ class TVPowerContorl(object):
             log(["Turn OFF TV target time?", self.turn_off_activated])
             if self.turn_off_player_ones_launched == True and self.at_least_ones_player_launched == False:
                 log("Player wasn't launched, skipping Turn OFF")
-            else
+            else:
                 self.turn_off_tv()
             
         elif event == "screen_saver_deactivated":
