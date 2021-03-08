@@ -4,9 +4,9 @@ import time
 import subprocess
 
 def log(message):
-    xbmc.log("### TV power controller: " + str(message), level=xbmc.LOGNOTICE)
+    xbmc.log("### TV power controller: " + str(message), level=xbmc.LOGINFO)
 
-class TVPowerContorl(object):
+class TVPowerControl(object):
 
     target_time_for_execution = 0
     at_least_ones_player_launched = False
