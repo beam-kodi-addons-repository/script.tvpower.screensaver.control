@@ -7,7 +7,7 @@ __scriptname__    = __addon__.getAddonInfo('name')
 __version__       = __addon__.getAddonInfo('version')
 __language__      = __addon__.getLocalizedString
 __resource_path__ = os.path.join(__cwd__, 'resources', 'lib')
-__resource__      = xbmcvfs.translatePath(__resource_path__).decode('utf-8')
+__resource__      = xbmcvfs.translatePath(__resource_path__)
 
 sys.path.append (__resource__)
 
