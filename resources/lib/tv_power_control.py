@@ -34,6 +34,8 @@ class TVPowerControl(object):
         self.turn_on_method = self.addon.getSetting("turn_on_method")
         self.turn_off_method = self.addon.getSetting("turn_off_method")
         self.cec_client_command = self.addon.getSetting("cec_client_path")
+        self.turn_on_command = self.addon.getSetting("turn_on_command_path")
+        self.turn_off_command = self.addon.getSetting("turn_off_command_path")
 
         self.suppress_wake_up = int(self.addon.getSetting("suppress_wake_up"))
 
@@ -74,6 +76,8 @@ class TVPowerControl(object):
             xbmc.executebuiltin('XBMC.CECStandby()')
         elif self.turn_off_method == "cec-client":
             subprocess.call("echo 'standby 0' | " + self.cec_client_command + " -s", shell=True)
+        elif self.turn_off_method == "command":
+            subprocess.call(self.turn_off_command, shell=True)
 
         self.hook_stop_player()
         self.hook_turn_off_action()
@@ -88,6 +92,8 @@ class TVPowerControl(object):
             xbmc.executebuiltin('XBMC.CECActivateSource()')
         elif self.turn_on_method == "cec-client":
             subprocess.call("echo 'on 0' | " + self.cec_client_command + " -s", shell=True)
+        elif self.turn_on_method == "command":
+            subprocess.call(self.turn_on_command, shell=True)
 
         return True
 
