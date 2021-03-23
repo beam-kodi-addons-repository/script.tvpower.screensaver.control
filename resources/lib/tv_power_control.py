@@ -37,6 +37,11 @@ class TVPowerControl(object):
         self.turn_on_command = self.addon.getSetting("turn_on_command_path")
         self.turn_off_command = self.addon.getSetting("turn_off_command_path")
 
+        self.turn_on_condition = self.addon.getSetting("turn_on_condition") == 'true'
+        self.turn_on_condition_command = self.addon.getSetting("turn_on_condition_path")
+        self.turn_off_condition = self.addon.getSetting("turn_off_condition") == 'true'
+        self.turn_off_condition_command = self.addon.getSetting("turn_off_condition_path")
+
         self.suppress_wake_up = int(self.addon.getSetting("suppress_wake_up"))
 
     def hook_stop_player(self):
@@ -68,8 +73,27 @@ class TVPowerControl(object):
 
         return True
 
+    def turn_on_off_condition(self, action):
+        if action == 'on':
+            if self.turn_on_condition == True:
+                cmd = subprocess.call(self.turn_on_condition_command, shell=True)
+                log(["Checking ON condition with result", cmd])
+                return cmd == 0
+        elif action == 'off':
+            if self.turn_off_condition == True:
+                cmd = subprocess.call(self.turn_off_condition_command, shell=True)
+                log(["Checking OFF condition with result", cmd])
+                return cmd == 0
+        else:
+            return True
+
+
     def turn_off_tv(self):
         log(["Turn OFF TV via", self.turn_off_method])
+
+        if self.turn_on_off_condition("off") == False: 
+            log(["Turn OFF action canceled due to condition"])
+            return False
 
         # do action
         if self.turn_off_method == "kodi":
@@ -86,6 +110,10 @@ class TVPowerControl(object):
 
     def turn_on_tv(self):
         log(["Turn ON TV via", self.turn_on_method])
+
+        if self.turn_on_off_condition("on") == False: 
+            log(["Turn ON action canceled due to condition"])
+            return False
 
         # do action
         if self.turn_on_method == "kodi":

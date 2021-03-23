@@ -3,8 +3,10 @@
 	<category label="Turn ON TV">
 		<setting id="turn_on_deactivated" type="bool" label="After screensaver deactivated" default="true" />
 		<setting id="turn_on_player" label="When player started" type="bool" default="true" />
-		<setting id="turn_on_method" label="Turn on TV via HDMI-CEC or command" type="labelenum" values="kodi|cec-client|command" default="kodi" />
-		<setting id="turn_on_command_path" label="TV on command" subsetting="true" type="text" default="power-on-tv" enable="eq(-1,command)" />
+		<setting id="turn_on_method" label="Via HDMI-CEC or command" type="labelenum" values="kodi|cec-client|command" default="kodi" />
+		<setting id="turn_on_command_path" label="Command" subsetting="true" type="text" default="power-on-tv" enable="eq(-1,command)" />
+		<setting id="turn_on_condition" type="bool" label="Only if condition command return exit code 0" default="false" />
+		<setting id="turn_on_condition_path" label="Condition command" subsetting="true" type="text" default="exit 0" enable="eq(-1,true)" />
 	</category>
 	<category label="Turn OFF TV">
 		<setting id="turn_off_activated" type="bool" label="After screensaver activated" default="true" />
@@ -12,8 +14,10 @@
 		<setting id="turn_off_wait_time" label="Wait on screensaver before turning off (minutes)" type="slider" subsetting="true" enable="eq(-2,true)" default="45" range="0,5,180" option="int" />
 		<setting id="turn_off_stop" label="Stop player" type="bool" default="true" enable="eq(-3,true)" />
 		<setting id="turn_off_action" label="Execute action after turned off" type="labelenum" values="none|restart|quit|reboot|shutdown" default="none" enable="eq(-4,true)" />
-		<setting id="turn_off_method" label="Turn off TV via HDMI-CEC or command" type="labelenum" values="kodi|cec-client|command" default="kodi" />
-		<setting id="turn_off_command_path" label="TV off command" subsetting="true" type="text" default="power-off-tv" enable="eq(-1,command)" />
+		<setting id="turn_off_method" label="Via HDMI-CEC or command" type="labelenum" values="kodi|cec-client|command" default="kodi" />
+		<setting id="turn_off_command_path" label="Command" subsetting="true" type="text" default="power-off-tv" enable="eq(-1,command)" />
+		<setting id="turn_off_condition" type="bool" label="Only if condition command return exit code 0" default="false" />
+		<setting id="turn_off_condition_path" label="Condition command" subsetting="true" type="text" default="exit 0" enable="eq(-1,true)" />
 	</category>
 	<category label="Advanced">
 		<setting id="cec_client_path" label="CEC-Client command path" type="text" default="/usr/osmc/bin/cec-client" />
