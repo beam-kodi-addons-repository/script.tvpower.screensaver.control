@@ -3,7 +3,7 @@
 	<category label="Turn ON TV">
 		<setting id="turn_on_deactivated" type="bool" label="After screensaver deactivated" default="true" />
 		<setting id="turn_on_player" label="When player started" type="bool" default="true" />
-		<setting id="turn_on_cec_method" label="Send HDMI-CEC commands via" type="labelenum" values="kodi|cec-client" default="kodi" />
+		<setting id="turn_on_method" label="Turn on TV via HDMI-CEC or command" type="labelenum" values="kodi|cec-client|command" default="kodi" />
 	</category>
 	<category label="Turn OFF TV">
 		<setting id="turn_off_activated" type="bool" label="After screensaver activated" default="true" />
@@ -11,7 +11,7 @@
 		<setting id="turn_off_wait_time" label="Wait on screensaver before turning off (minutes)" type="slider" subsetting="true" enable="eq(-2,true)" default="45" range="0,5,180" option="int" />
 		<setting id="turn_off_stop" label="Stop player" type="bool" default="true" enable="eq(-3,true)" />
 		<setting id="turn_off_action" label="Execute action after turned off" type="labelenum" values="none|restart|quit|reboot|shutdown" default="none" enable="eq(-4,true)" />
-		<setting id="turn_off_cec_method" label="Send HDMI-CEC commands via" type="labelenum" values="kodi|cec-client" default="kodi" />
+		<setting id="turn_off_method" label="Turn off TV via HDMI-CEC or command" type="labelenum" values="kodi|cec-client|command" default="kodi" />
 	</category>
 	<category label="Advanced">
 		<setting id="cec_client_path" label="CEC-Client command path" type="text" default="/usr/osmc/bin/cec-client" />
