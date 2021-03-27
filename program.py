@@ -12,11 +12,9 @@ __resource__      = xbmc.translatePath(__resource_path__).decode('utf-8')
 sys.path.append (__resource__)
 
 from tv_power_control import TVPowerControl
+from tv_power_control import log
 
 tvpower = TVPowerControl(__addon__, None, True)
-
-def log(message):
-    xbmc.log("### TV power controller: " + str(message), level=xbmc.LOGNOTICE)
 
 if len(sys.argv) < 2: log("No arguments")
 
