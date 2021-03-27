@@ -1,5 +1,5 @@
 import os,sys
-import xbmc, xbmcaddon
+import xbmc, xbmcvfs, xbmcaddon
 
 __addon__         = xbmcaddon.Addon()
 __cwd__           = __addon__.getAddonInfo('path')
@@ -7,7 +7,7 @@ __scriptname__    = __addon__.getAddonInfo('name')
 __version__       = __addon__.getAddonInfo('version')
 __language__      = __addon__.getLocalizedString
 __resource_path__ = os.path.join(__cwd__, 'resources', 'lib')
-__resource__      = xbmc.translatePath(__resource_path__).decode('utf-8')
+__resource__      = xbmcvfs.translatePath(__resource_path__)
 
 sys.path.append (__resource__)
 
