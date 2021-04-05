@@ -16,8 +16,6 @@ from tv_power_control import log
 
 class KodiMonitor(xbmc.Monitor):
 
-    screensaver_running = False
-
     def onSettingsChanged(self):
         tvpower.load_settings()
 
@@ -25,11 +23,9 @@ class KodiMonitor(xbmc.Monitor):
         if method == "Player.OnPlay": tvpower.check_monitor("player_stared")
 
     def onScreensaverActivated(self):
-        self.screensaver_running = True
         tvpower.check_monitor("screen_saver_activated")
 
     def onScreensaverDeactivated(self):
-        self.screensaver_running = False
         tvpower.check_monitor("screen_saver_deactivated")
 
 if (__name__ == "__main__"):

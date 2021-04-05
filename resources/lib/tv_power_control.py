@@ -9,8 +9,10 @@ def log(message, log_level=xbmc.LOGINFO):
 class TVPowerControl(object):
 
     target_time_for_execution = 0
+    turn_off_executed_at = 0
     at_least_ones_player_launched = False
     post_action_executed = False
+    screensaver_running = False
 
     def __init__(self, addon, monitor, external_run = False):
         self.addon = addon
@@ -23,8 +25,7 @@ class TVPowerControl(object):
         self.turn_off_activated = self.addon.getSetting("turn_off_activated") == 'true'
         self.turn_off_after = int(self.addon.getSetting("turn_off_wait_time"))
         self.stop_player_on_turn_off = self.addon.getSetting("turn_off_stop") == 'true'
-        self.stop_player_on_turn_off_last_at = 0
-
+        
         self.turn_off_action = self.addon.getSetting("turn_off_action")
         self.turn_off_player_ones_launched = self.addon.getSetting("turn_off_player_ones_launched") == 'true'
 
@@ -49,7 +50,6 @@ class TVPowerControl(object):
         if self.stop_player_on_turn_off == False: return False
         if xbmc.Player().isPlaying() == True:
             xbmc.Player().stop()
-            self.stop_player_on_turn_off_last_at = time.time()
         return True
 
     def hook_turn_off_action(self):
@@ -103,6 +103,8 @@ class TVPowerControl(object):
         elif self.turn_off_method == "command":
             subprocess.call(self.turn_off_command, shell=True)
 
+        self.turn_off_executed_at = time.time()
+
         self.hook_stop_player()
         self.hook_turn_off_action()
 
@@ -127,6 +129,7 @@ class TVPowerControl(object):
 
     def execute_command(self, event):
         log(["Execute command on EVENT", event])
+
         if event == "screen_saver_activated_target_time_ago":
             log(["Turn OFF TV target time?", self.turn_off_activated])
             if self.turn_off_player_ones_launched == True and self.at_least_ones_player_launched == False:
@@ -135,18 +138,28 @@ class TVPowerControl(object):
                 self.turn_off_tv()
             
         elif event == "screen_saver_deactivated":
-            if self.suppress_wake_up != 0 and (self.stop_player_on_turn_off_last_at + self.suppress_wake_up) > time.time():
-                log("Stop player should deactivate screensaved, suppressing wake up actions and activate screensaved again")
-                self.stop_player_on_turn_off_last_at = 0
+            self.screensaver_running = False
+            if self.suppress_wake_up != 0 and (self.turn_off_executed_at + self.suppress_wake_up) > time.time():
+                log("Turn off TV should deactivate screensaver, suppressing wake up actions and activate screensaver again")
                 xbmc.executebuiltin("XBMC.ActivateScreensaver()")
             elif self.post_action_executed == True:
                 log("Post action executed, suppressing wake up action")
             else:
                 log(["Turn ON TV on screensaver deactivated?", self.turn_on_deactivated])
                 if self.turn_on_deactivated == True: self.turn_on_tv()
+
         elif event == "player_stared":
             self.at_least_ones_player_launched = True
             if self.turn_on_player_start == True: self.turn_on_tv()
+
+        elif event == "screen_saver_activated": 
+            self.screensaver_running = True
+            if self.suppress_wake_up != 0 and (self.turn_off_executed_at + self.suppress_wake_up) > time.time():
+                log("Screen saver activated by me, turn off TV not scheduled")
+                self.turn_off_executed_at = 0
+            else:
+                self.target_time_for_execution = time.time() + (self.turn_off_after * 60)
+                log(["Turn off TV scheduled on", time.ctime(self.target_time_for_execution)])
 
         # screen_saver_activated
         # screen_saver_deactivated
@@ -156,9 +169,8 @@ class TVPowerControl(object):
     def check_monitor(self, event = None):
         if self.monitor == None: return False
         if event != None: self.execute_command(event)
-        if event == "screen_saver_activated": self.target_time_for_execution = time.time() + (self.turn_off_after * 60)
 
-        if self.monitor.screensaver_running == True and self.target_time_for_execution > 0 and self.target_time_for_execution <= time.time():
+        if self.screensaver_running == True and self.target_time_for_execution > 0 and self.target_time_for_execution <= time.time():
             self.target_time_for_execution = 0
             self.execute_command("screen_saver_activated_target_time_ago")
 
