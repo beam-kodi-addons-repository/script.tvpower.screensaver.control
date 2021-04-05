@@ -3,8 +3,8 @@ import xbmc, xbmcaddon
 import time
 import subprocess
 
-def log(message):
-    xbmc.log("### TV power controller: " + str(message), level=xbmc.LOGINFO)
+def log(message, log_level=xbmc.LOGINFO):
+    xbmc.log("### TV power controller: " + str(message), level=log_level)
 
 class TVPowerControl(object):
 
