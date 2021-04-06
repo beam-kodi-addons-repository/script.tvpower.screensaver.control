@@ -12,7 +12,7 @@ __resource__      = xbmc.translatePath(__resource_path__).decode('utf-8')
 sys.path.append (__resource__)
 
 from tv_power_control import TVPowerControl
-from tv_power_control import log
+from utilities import log
 
 class KodiMonitor(xbmc.Monitor):
 

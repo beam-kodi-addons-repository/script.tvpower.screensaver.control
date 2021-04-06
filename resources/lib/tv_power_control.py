@@ -1,22 +1,9 @@
 import os,sys
 import xbmc, xbmcaddon
 import time
-import subprocess, exceptions, traceback
 
-def log(message, log_level=xbmc.LOGINFO):
-    xbmc.log("### TV power controller: " + str(message), level=log_level)
-
-def exec_shell_command(command):
-    try:
-        # proc = subprocess.Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
-        # out, err = proc.communicate()
-        # return_code = proc.returncode
-        # return return_code, out, err
-        return_code = subprocess.call(command, shell=True)
-    except Exception, err:
-        log(traceback.format_exc(), log_level=xbmc.LOGERROR)
-        return_code = 0 # TODO: return error value and add setting to caller how to handle errors
-    return return_code
+from utilities import log, exec_shell_command
+from tvrc_main import tvrc_process_settings_string
 
 class TVPowerControl(object):
 
