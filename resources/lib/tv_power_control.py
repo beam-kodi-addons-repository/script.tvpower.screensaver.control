@@ -73,12 +73,12 @@ class TVPowerControl(object):
         return True
 
     def turn_on_off_condition(self, action):
-        if action == 'on':
+        if action == 'turn_on':
             if self.turn_on_condition == True:
                 result = exec_shell_command(self.turn_on_condition_command)
                 log(["Checking ON condition with result", result])
                 return result == 0
-        elif action == 'off':
+        elif action == 'turn_off':
             if self.turn_off_condition == True:
                 result = exec_shell_command(self.turn_off_condition_command)
                 log(["Checking OFF condition with result", result])
@@ -90,7 +90,7 @@ class TVPowerControl(object):
     def turn_off_tv(self):
         log(["Turn OFF TV via", self.turn_off_method])
 
-        if self.turn_on_off_condition("off") == False: 
+        if self.turn_on_off_condition("turn_off") == False: 
             log(["Turn OFF action canceled due to condition"])
             return False
 
@@ -112,7 +112,7 @@ class TVPowerControl(object):
     def turn_on_tv(self):
         log(["Turn ON TV via", self.turn_on_method])
 
-        if self.turn_on_off_condition("on") == False: 
+        if self.turn_on_off_condition("turn_on") == False: 
             log(["Turn ON action canceled due to condition"])
             return False
 
