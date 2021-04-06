@@ -1,10 +1,22 @@
 import os,sys
 import xbmc, xbmcaddon
 import time
-import subprocess
+import subprocess, exceptions, traceback
 
 def log(message, log_level=xbmc.LOGINFO):
     xbmc.log("### TV power controller: " + str(message), level=log_level)
+
+def exec_shell_command(command):
+    try:
+        # proc = subprocess.Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
+        # out, err = proc.communicate()
+        # return_code = proc.returncode
+        # return return_code, out, err
+        return_code = subprocess.call(command, shell=True)
+    except Exception, err:
+        log(traceback.format_exc(), log_level=xbmc.LOGERROR)
+        return_code = 0 # TODO: return error value and add setting to caller how to handle errors
+    return return_code
 
 class TVPowerControl(object):
 
@@ -76,14 +88,14 @@ class TVPowerControl(object):
     def turn_on_off_condition(self, action):
         if action == 'on':
             if self.turn_on_condition == True:
-                cmd = subprocess.call(self.turn_on_condition_command, shell=True)
-                log(["Checking ON condition with result", cmd])
-                return cmd == 0
+                result = exec_shell_command(self.turn_on_condition_command)
+                log(["Checking ON condition with result", result])
+                return result == 0
         elif action == 'off':
             if self.turn_off_condition == True:
-                cmd = subprocess.call(self.turn_off_condition_command, shell=True)
-                log(["Checking OFF condition with result", cmd])
-                return cmd == 0
+                result = exec_shell_command(self.turn_off_condition_command)
+                log(["Checking OFF condition with result", result])
+                return result == 0
         else:
             return True
 
@@ -99,9 +111,9 @@ class TVPowerControl(object):
         if self.turn_off_method == "kodi":
             xbmc.executebuiltin('XBMC.CECStandby()')
         elif self.turn_off_method == "cec-client":
-            subprocess.call("echo 'standby 0' | " + self.cec_client_command + " -s", shell=True)
+            exec_shell_command("echo 'standby 0' | " + self.cec_client_command + " -s")
         elif self.turn_off_method == "command":
-            subprocess.call(self.turn_off_command, shell=True)
+            exec_shell_command(self.turn_off_command)
 
         self.turn_off_executed_at = time.time()
 
@@ -121,9 +133,9 @@ class TVPowerControl(object):
         if self.turn_on_method == "kodi":
             xbmc.executebuiltin('XBMC.CECActivateSource()')
         elif self.turn_on_method == "cec-client":
-            subprocess.call("echo 'on 0' | " + self.cec_client_command + " -s", shell=True)
+            exec_shell_command("echo 'on 0' | " + self.cec_client_command + " -s")
         elif self.turn_on_method == "command":
-            subprocess.call(self.turn_on_command, shell=True)
+            exec_shell_command(self.turn_on_command)
 
         return True
 
