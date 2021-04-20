@@ -36,6 +36,8 @@ class TVPowerControl(object):
         self.cec_client_command = self.addon.getSetting("cec_client_path")
         self.turn_on_command = self.addon.getSetting("turn_on_command_path")
         self.turn_off_command = self.addon.getSetting("turn_off_command_path")
+        self.turn_on_internal_command = self.addon.getSetting("turn_on_internal_command")
+        self.turn_off_internal_command = self.addon.getSetting("turn_off_internal_command")
 
         self.turn_on_condition = self.addon.getSetting("turn_on_condition") == 'true'
         self.turn_on_condition_command = self.addon.getSetting("turn_on_condition_path")
@@ -106,6 +108,8 @@ class TVPowerControl(object):
             exec_shell_command("echo 'standby 0' | " + self.cec_client_command + " -s")
         elif self.turn_off_method == "command":
             exec_shell_command(self.turn_off_command)
+        elif self.turn_off_method == "internal":
+            tvrc_process_settings_string("turn_off", self.turn_off_internal_command)
 
         self.turn_off_executed_at = time.time()
         self.hook_turn_off_action()
@@ -126,6 +130,9 @@ class TVPowerControl(object):
             exec_shell_command("echo 'on 0' | " + self.cec_client_command + " -s")
         elif self.turn_on_method == "command":
             exec_shell_command(self.turn_on_command)
+        elif self.turn_on_method == "internal":
+            tvrc_process_settings_string("turn_on", self.turn_on_internal_command)
+
 
         return True
 
