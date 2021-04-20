@@ -29,11 +29,11 @@ class KodiMonitor(xbmc.Monitor):
         tvpower.check_monitor("screen_saver_deactivated")
 
 if (__name__ == "__main__"):
-    log("Starting.. " + __version__)
+    log("Starting monitor.. " + __version__)
     monitor = KodiMonitor()
     tvpower = TVPowerControl(__addon__, monitor)
     while not monitor.abortRequested():
         if monitor.waitForAbort(10): break
         tvpower.check_monitor()
     del monitor
-    log("Stopped.. " + __version__)
+    log("Stopped monitor.. " + __version__)

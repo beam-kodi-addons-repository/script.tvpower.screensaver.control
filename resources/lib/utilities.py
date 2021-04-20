@@ -1,8 +1,8 @@
 import xbmc
 import subprocess, exceptions, traceback
 
-def log(message, log_level=xbmc.LOGINFO):
-    if log_level == "info": log_level = xbmc.LOGINFO
+def log(message, log_level=xbmc.LOGNOTICE):
+    if log_level == "info": log_level = xbmc.LOGNOTICE
     if log_level == "debug": log_level = xbmc.LOGDEBUG
     if log_level == "error": log_level = xbmc.LOGERROR
     if log_level == "warn": log_level = xbmc.LOGWARNING
