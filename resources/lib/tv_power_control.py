@@ -90,9 +90,14 @@ class TVPowerControl(object):
     def turn_off_tv(self):
         log(["Turn OFF TV via", self.turn_off_method])
 
+        self.turn_off_executed_at = time.time()
+        self.hook_stop_player()
+
         if self.turn_on_off_condition("turn_off") == False: 
             log(["Turn OFF action canceled due to condition"])
             return False
+
+        self.turn_off_executed_at = time.time()
 
         # do action
         if self.turn_off_method == "kodi":
@@ -103,8 +108,6 @@ class TVPowerControl(object):
             exec_shell_command(self.turn_off_command)
 
         self.turn_off_executed_at = time.time()
-
-        self.hook_stop_player()
         self.hook_turn_off_action()
 
         return True
@@ -139,7 +142,7 @@ class TVPowerControl(object):
         elif event == "screen_saver_deactivated":
             self.screensaver_running = False
             if self.suppress_wake_up != 0 and (self.turn_off_executed_at + self.suppress_wake_up) > time.time():
-                log("Turn off TV should deactivate screensaver, suppressing wake up actions and activate screensaver again")
+                log("Turn off TV or stoping player should deactivate screensaver, suppressing wake up actions and activate screensaver again")
                 xbmc.executebuiltin("XBMC.ActivateScreensaver()")
             elif self.post_action_executed == True:
                 log("Post action executed, suppressing wake up action")
