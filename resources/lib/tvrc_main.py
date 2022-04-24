@@ -1,7 +1,7 @@
 from utilities import log
 from tvrc_baseclass import BaseTVRemoteControl
 from tvrc_samsung_pre_2016 import TVRC_SamsungPre2016
-import exceptions, traceback
+import traceback
 
 for subclass in BaseTVRemoteControl.__subclasses__():
     log(["Imported TVRC", subclass.ident()], log_level="debug")
@@ -25,7 +25,7 @@ def tvrc_process_settings_string(action, settings_string):
         else:
             log(["Unknown TVRC action", action], "warn")
             return False
-    except Exception, err:
+    except Exception as err:
         log(traceback.format_exc(), log_level="error")
         return False
 
